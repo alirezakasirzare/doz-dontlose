@@ -1,4 +1,5 @@
 <template>
+  <!-- doz layout -->
   <main class="doz">
     <!-- row up -->
     <div class="doz-item my"></div>
@@ -34,6 +35,7 @@
     transition: 0.4s ease background;
     position: relative;
 
+    // hover of items of doz layout
     &:hover:not(.enemy):not(.my) {
       background-color: #f5f5f5;
       cursor: pointer;
@@ -48,7 +50,7 @@
       border-bottom: none;
     }
 
-    // my choose
+    // my choose icon
     &.my::after {
       content: "";
       border: 5px solid #4caf50;
@@ -57,7 +59,7 @@
       width: 50%;
       height: 50%;
     }
-    // enemy choose
+    // enemy choose icon
     &.enemy::after,
     &.enemy::before {
       content: "";
