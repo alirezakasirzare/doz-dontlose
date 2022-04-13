@@ -1,3 +1,4 @@
+// font
 @font-face {
   font-family: IRANSansWeb;
   src: url(../font/IRANSansWeb_UltraLight.woff2) format("woff2"),
@@ -34,8 +35,15 @@
   font-style: normal;
 }
 
+// global
 body {
   direction: rtl;
   font-family: IRANSansWeb;
   background-color: #f5f5f5;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }

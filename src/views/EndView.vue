@@ -7,10 +7,6 @@
       </div>
       <div class="card-footer">
         <router-link to="/" class="btn btn-dark">ادامه بازی</router-link>
-
-        <router-link to="/" class="btn btn-danger"
-          >اتمام بازی و برگشت به خانه</router-link
-        >
       </div>
     </div>
   </div>

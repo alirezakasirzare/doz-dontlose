@@ -1,4 +1,1 @@
-add font
-create layout of doz game
-create layout of end game handeler
-add home (choose level of harding)
+add buton for restart count
