@@ -28,7 +28,7 @@
 
   &-item {
     padding: 10px;
-    font-size: 20px;
+    font-size: 17px;
     border-bottom: 1px solid rgba(238, 238, 238, 0.173);
   }
 }
