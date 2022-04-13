@@ -1,0 +1,3 @@
+add font
+create layout of doz game
+create layout of end game handeler
