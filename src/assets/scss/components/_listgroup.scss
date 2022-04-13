@@ -1,0 +1,17 @@
+// list group
+.listgroup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #2196f3;
+  color: #fff;
+  min-width: 200px;
+  border-radius: 4px;
+
+  // list group item
+  &-item {
+    padding: 10px;
+    font-size: 17px;
+    border-bottom: 1px solid rgba(238, 238, 238, 0.173);
+  }
+}

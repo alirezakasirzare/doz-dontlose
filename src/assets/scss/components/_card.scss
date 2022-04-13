@@ -1,0 +1,29 @@
+// card handeler
+.card {
+  width: 500px;
+  border-radius: 4px;
+  color: #1a1a1a;
+
+  // card colors
+  &.card-primary {
+    background-color: #90caf9;
+  }
+  &.card-danger {
+    background-color: #f44336;
+  }
+  &.card-mute {
+    background-color: #bdbdbd;
+  }
+  // title of the card
+  &-title {
+    padding: 10px;
+    border-bottom: #bbdefb 1px solid;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  // body and footer of the card
+  &-body,
+  &-footer {
+    padding: 10px;
+  }
+}
