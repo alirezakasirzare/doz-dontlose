@@ -11,6 +11,7 @@
       <!-- footer of the card -->
       <div class="card-footer">
         <router-link to="/" class="btn btn-dark">ادامه بازی</router-link>
+        <router-link to="/" class="btn btn-danger">ریستارت بازی</router-link>
       </div>
     </div>
   </div>

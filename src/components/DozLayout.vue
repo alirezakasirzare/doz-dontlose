@@ -37,7 +37,7 @@
 
     // hover of items of doz layout
     &:hover:not(.enemy):not(.my) {
-      background-color: #f5f5f5;
+      background-color: #eee;
       cursor: pointer;
     }
 
