@@ -56,8 +56,6 @@ export default {
   data() {
     return {
       items: initialItems(),
-      enemyScore: 0,
-      myScore: 0,
       myChooses: [],
       enemyChooses: [],
     };
@@ -97,7 +95,7 @@ export default {
     myChooses(newValue) {
       if (checkEndGame(newValue.map((item) => item + 1))) {
         // win
-        this.myScore += 1;
+        this.$store.commit("addMyScore");
         this.$store.commit("chnageTurn", "end");
       } else if (!this.items.filter((item) => item === null).length) {
         // Equal
@@ -113,7 +111,8 @@ export default {
     enemyChooses(newValue) {
       if (checkEndGame(newValue.map((item) => item + 1))) {
         // losse
-        this.enemyScore += 1;
+        this.$store.commit("addEnemyScore");
+
         this.$store.commit("chnageTurn", "end");
       } else if (!this.items.filter((item) => item === null).length) {
         // Equal

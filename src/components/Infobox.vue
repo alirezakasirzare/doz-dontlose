@@ -8,13 +8,13 @@
     </div>
     <!-- my score -->
     <div class="listgroup-item">
-      <span>امتیاز من :</span>
-      <span>12</span>
+      <span>امتیاز من : </span>
+      <span v-text="myScore"></span>
     </div>
     <!-- enemy score -->
     <div class="listgroup-item">
-      <span> امتیاز رقیب :</span>
-      <span>44</span>
+      <span> امتیاز رقیب : </span>
+      <span v-text="enemyScore"></span>
     </div>
   </div>
 </template>
@@ -25,14 +25,25 @@ export default {
     turn() {
       return this.$store.state.turn;
     },
+    myScore() {
+      return this.$store.state.myScore;
+    },
+    enemyScore() {
+      return this.$store.state.enemyScore;
+    },
   },
   mounted() {
     let points = "";
     setInterval(() => {
       points = points === "..." ? "" : points + ".";
-      this.$refs["info-turn"].innerHTML = `${
-        this.turn == "me" ? "من" : "رقیب"
-      } ${this.turn == "enemy" ? points : ""}`;
+
+      if (this.turn == "me") {
+        this.$refs["info-turn"].innerHTML = "من";
+      } else if (this.turn == "enemy") {
+        this.$refs["info-turn"].innerHTML = ` رقیب${points}`;
+      } else {
+        this.$refs["info-turn"].innerHTML = "اتمام";
+      }
     }, 300);
   },
 };

@@ -1,4 +1,6 @@
 <template>
+  <Infobox />
+
   <div class="center h-full">
     <!-- start card of end game -->
     <div class="card card-primary">
@@ -16,3 +18,12 @@
     </div>
   </div>
 </template>
+
+<script>
+import Infobox from "@/components/Infobox.vue";
+export default {
+  components: {
+    Infobox,
+  },
+};
+</script>
