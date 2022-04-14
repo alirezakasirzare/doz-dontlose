@@ -17,6 +17,10 @@ export default createStore({
     addEnemyScore(state) {
       state.enemyScore = state.enemyScore + 1;
     },
+    restartScores(state) {
+      state.enemyScore = 0;
+      state.myScore = 0;
+    },
   },
   actions: {},
   modules: {},

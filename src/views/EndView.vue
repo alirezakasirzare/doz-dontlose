@@ -12,8 +12,12 @@
       </div>
       <!-- footer of the card -->
       <div class="card-footer">
-        <router-link to="/" class="btn btn-dark">ادامه بازی</router-link>
-        <router-link to="/" class="btn btn-danger">ریستارت بازی</router-link>
+        <button class="btn btn-dark" @click="continueClicked">
+          ادامه بازی
+        </button>
+        <button class="btn btn-danger" @click="restartClicked">
+          ریستارت بازی
+        </button>
       </div>
     </div>
   </div>
@@ -24,6 +28,17 @@ import Infobox from "@/components/Infobox.vue";
 export default {
   components: {
     Infobox,
+  },
+  methods: {
+    continueClicked() {
+      this.$store.commit("chnageTurn", "me");
+      this.$router.push("/");
+    },
+    restartClicked() {
+      this.$store.commit("chnageTurn", "me");
+      this.$store.commit("restartScores");
+      this.$router.push("/");
+    },
   },
 };
 </script>
