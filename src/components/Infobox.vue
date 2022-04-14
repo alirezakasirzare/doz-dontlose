@@ -32,19 +32,30 @@ export default {
       return this.$store.state.enemyScore;
     },
   },
-  mounted() {
-    let points = "";
-    setInterval(() => {
-      points = points === "..." ? "" : points + ".";
+  data() {
+    return {
+      points: "",
+      interval: null,
+    };
+  },
+  methods: {
+    handelPoint() {
+      this.points = this.points === "..." ? "" : this.points + ".";
 
       if (this.turn == "me") {
         this.$refs["info-turn"].innerHTML = "من";
       } else if (this.turn == "enemy") {
-        this.$refs["info-turn"].innerHTML = ` رقیب${points}`;
+        this.$refs["info-turn"].innerHTML = ` رقیب${this.points}`;
       } else {
         this.$refs["info-turn"].innerHTML = "اتمام";
       }
-    }, 300);
+    },
+  },
+  mounted() {
+    this.interval = setInterval(this.handelPoint, 300);
+  },
+  unmounted() {
+    clearInterval(this.interval);
   },
 };
 </script>

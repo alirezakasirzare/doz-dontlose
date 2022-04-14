@@ -121,6 +121,11 @@ export default {
         this.$store.commit("chnageTurn", "me");
       }
     },
+    turn(newValue) {
+      if (newValue === "end") {
+        this.$router.push("/endofgame");
+      }
+    },
   },
 };
 </script>
