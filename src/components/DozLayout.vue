@@ -11,7 +11,7 @@
           clickItemHandeler(index);
         }
       "
-      :class="{ [`${item}`]: item }"
+      :class="{ [`${item}`]: item, 'can-hover': turn == 'me' }"
     ></div>
   </main>
 </template>
@@ -126,7 +126,9 @@ export default {
     },
     turn(newValue) {
       if (newValue === "end") {
-        this.$router.push("/endofgame");
+        setTimeout(() => {
+          this.$router.push("/endofgame");
+        }, 1000);
       }
     },
   },
@@ -151,7 +153,7 @@ export default {
     position: relative;
 
     // hover of items of doz layout
-    &:hover:not(.enemy):not(.me) {
+    &.can-hover:hover:not(.enemy):not(.me) {
       background-color: #eee;
       cursor: pointer;
     }
