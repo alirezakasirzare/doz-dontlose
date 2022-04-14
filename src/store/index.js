@@ -3,6 +3,7 @@ import { createStore } from "vuex";
 export default createStore({
   state: {
     turn: "me",
+    statusGame: "",
     myScore: 0,
     enemyScore: 0,
   },
@@ -10,6 +11,12 @@ export default createStore({
   mutations: {
     chnageTurn(state, newValue) {
       state.turn = newValue;
+    },
+    clearStatus(state) {
+      state.statusGame = "";
+    },
+    chnageStatus(state, newValue) {
+      state.statusGame = newValue;
     },
     addMyScore(state) {
       state.myScore = state.myScore + 1;

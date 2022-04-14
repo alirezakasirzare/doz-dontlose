@@ -96,9 +96,11 @@ export default {
       if (checkEndGame(newValue.map((item) => item + 1))) {
         // win
         this.$store.commit("addMyScore");
+        this.$store.commit("chnageStatus", "win");
         this.$store.commit("chnageTurn", "end");
       } else if (!this.items.filter((item) => item === null).length) {
         // Equal
+        this.$store.commit("chnageStatus", "equal");
         this.$store.commit("chnageTurn", "end");
       } else {
         if (newValue.length) {
@@ -110,12 +112,13 @@ export default {
     },
     enemyChooses(newValue) {
       if (checkEndGame(newValue.map((item) => item + 1))) {
-        // losse
+        // lose
         this.$store.commit("addEnemyScore");
-
         this.$store.commit("chnageTurn", "end");
+        this.$store.commit("chnageStatus", "lose");
       } else if (!this.items.filter((item) => item === null).length) {
         // Equal
+        this.$store.commit("chnageStatus", "equal");
         this.$store.commit("chnageTurn", "end");
       } else {
         this.$store.commit("chnageTurn", "me");
