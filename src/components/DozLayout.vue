@@ -60,6 +60,9 @@ export default {
       enemyChooses: [],
     };
   },
+  mounted() {
+    this.enemyChoose();
+  },
   computed: {
     turn() {
       return this.$store.state.turn;
