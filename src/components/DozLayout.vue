@@ -1,22 +1,130 @@
 <template>
   <!-- doz layout -->
   <main class="doz">
-    <!-- row up -->
-    <div class="doz-item my"></div>
-    <div class="doz-item"></div>
-    <div class="doz-item"></div>
-
-    <!-- row middle -->
-    <div class="doz-item"></div>
-    <div class="doz-item enemy"></div>
-    <div class="doz-item"></div>
-
-    <!-- row down -->
-    <div class="doz-item"></div>
-    <div class="doz-item"></div>
-    <div class="doz-item"></div>
+    <!-- items -->
+    <div
+      class="doz-item"
+      v-for="(item, index) in items"
+      :key="index"
+      @click="
+        () => {
+          clickItemHandeler(index);
+        }
+      "
+      :class="{ [`${item}`]: item }"
+    ></div>
   </main>
 </template>
+
+<script>
+const initialItems = () => [
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+];
+
+const arrayContain = (chooses, should) => {
+  let willBack = true;
+  should.forEach((item) => {
+    if (!chooses.includes(item)) {
+      willBack = false;
+    }
+  });
+
+  return willBack;
+};
+
+const checkEndGame = (chooses) => {
+  return (
+    arrayContain(chooses, [1, 2, 3]) ||
+    arrayContain(chooses, [4, 5, 6]) ||
+    arrayContain(chooses, [7, 8, 9]) ||
+    arrayContain(chooses, [1, 4, 7]) ||
+    arrayContain(chooses, [2, 5, 8]) ||
+    arrayContain(chooses, [3, 6, 9]) ||
+    arrayContain(chooses, [1, 5, 9]) ||
+    arrayContain(chooses, [3, 5, 7])
+  );
+};
+export default {
+  data() {
+    return {
+      items: initialItems(),
+      enemyScore: 0,
+      myScore: 0,
+      myChooses: [],
+      enemyChooses: [],
+    };
+  },
+  computed: {
+    turn() {
+      return this.$store.state.turn;
+    },
+  },
+  methods: {
+    clickItemHandeler(index) {
+      if (this.turn === "me" && !this.items[index]) {
+        const newItems = [...this.items];
+        newItems[index] = "me";
+        this.items = newItems;
+        this.myChooses = [...this.myChooses, index];
+      }
+    },
+    enemyChoose() {
+      setTimeout(() => {
+        const notChoosedYet = [...this.items]
+          .map((item, index) => {
+            if (!item) return index;
+          })
+          .filter((item) => item !== undefined);
+
+        const newItems = [...this.items];
+        const index =
+          notChoosedYet[Math.floor(Math.random() * notChoosedYet.length)];
+        newItems[index] = "enemy";
+        this.items = newItems;
+        this.enemyChooses = [...this.enemyChooses, index];
+      }, 3000);
+    },
+  },
+  watch: {
+    myChooses(newValue) {
+      if (checkEndGame(newValue.map((item) => item + 1))) {
+        // win
+        this.myScore += 1;
+        this.$store.commit("chnageTurn", "end");
+      } else if (!this.items.filter((item) => item === null).length) {
+        // Equal
+        this.$store.commit("chnageTurn", "end");
+      } else {
+        if (newValue.length) {
+          this.$store.commit("chnageTurn", "enemy");
+
+          this.enemyChoose();
+        }
+      }
+    },
+    enemyChooses(newValue) {
+      if (checkEndGame(newValue.map((item) => item + 1))) {
+        // losse
+        this.enemyScore += 1;
+        this.$store.commit("chnageTurn", "end");
+      } else if (!this.items.filter((item) => item === null).length) {
+        // Equal
+        this.$store.commit("chnageTurn", "end");
+      } else {
+        this.$store.commit("chnageTurn", "me");
+      }
+    },
+  },
+};
+</script>
 
 <style lang="scss" scoped>
 // doz template
@@ -36,7 +144,7 @@
     position: relative;
 
     // hover of items of doz layout
-    &:hover:not(.enemy):not(.my) {
+    &:hover:not(.enemy):not(.me) {
       background-color: #eee;
       cursor: pointer;
     }
@@ -51,7 +159,7 @@
     }
 
     // my choose icon
-    &.my::after {
+    &.me::after {
       content: "";
       border: 5px solid #4caf50;
       border-radius: 50%;

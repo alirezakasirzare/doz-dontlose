@@ -3,8 +3,8 @@
   <div class="listgroup">
     <!-- turn -->
     <div class="listgroup-item">
-      <span>نوبت :</span>
-      <span>من</span>
+      <span> نوبت : </span>
+      <span ref="info-turn"></span>
     </div>
     <!-- my score -->
     <div class="listgroup-item">
@@ -18,3 +18,22 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  computed: {
+    turn() {
+      return this.$store.state.turn;
+    },
+  },
+  mounted() {
+    let points = "";
+    setInterval(() => {
+      points = points === "..." ? "" : points + ".";
+      this.$refs["info-turn"].innerHTML = `${
+        this.turn == "me" ? "من" : "رقیب"
+      } ${this.turn == "enemy" ? points : ""}`;
+    }, 300);
+  },
+};
+</script>
