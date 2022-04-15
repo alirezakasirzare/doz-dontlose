@@ -55,15 +55,13 @@ const checkEndGame = (chooses) => {
 
 function stopWinInLastMoveModule(chooses, base) {
   let ShouldChoose = false;
-  const checker = chooses.reduce(
+  const checke = chooses.reduce(
     (previousValue, currentValue) =>
-      base.indexOf(currentValue) >= previousValue
-        ? previousValue + 1
-        : previousValue,
+      base.indexOf(currentValue) >= 0 ? previousValue + 1 : previousValue,
     0
   );
 
-  if (checker >= 2) {
+  if (checke === 2) {
     ShouldChoose = base.find((item) => chooses.indexOf(item) < 0);
   }
 
@@ -72,9 +70,15 @@ function stopWinInLastMoveModule(chooses, base) {
 function stopWinInLastMove(chooses, items) {
   const checker =
     stopWinInLastMoveModule(chooses, [1, 2, 3]) ||
+    stopWinInLastMoveModule(chooses, [4, 5, 6]) ||
     stopWinInLastMoveModule(chooses, [7, 8, 9]) ||
     stopWinInLastMoveModule(chooses, [1, 4, 7]) ||
-    stopWinInLastMoveModule(chooses, [3, 6, 9]);
+    stopWinInLastMoveModule(chooses, [2, 5, 8]) ||
+    stopWinInLastMoveModule(chooses, [3, 6, 9]) ||
+    stopWinInLastMoveModule(chooses, [1, 5, 9]) ||
+    stopWinInLastMoveModule(chooses, [3, 5, 7]);
+
+  console.log(checker);
   if (checker === false) {
     return false;
   } else if (items[checker - 1] === null) {
@@ -92,9 +96,7 @@ export default {
       enemyChooses: [],
     };
   },
-  mounted() {
-    this.enemyChoose();
-  },
+
   computed: {
     turn() {
       return this.$store.state.turn;

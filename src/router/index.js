@@ -24,7 +24,7 @@ const router = createRouter({
 router.beforeEach((to, from) => {
   // console.log(from.path, to.path);
   if (to.path == "/") {
-    if (store.state.turn != "enemy") {
+    if (store.state.turn != "me") {
       return "/endofgame";
     }
   } else if (to.path == "/endofgame") {

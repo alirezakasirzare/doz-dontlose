@@ -2,7 +2,7 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
-    turn: "enemy",
+    turn: "me",
     statusGame: "",
     myScore: 0,
     enemyScore: 0,
