@@ -53,7 +53,7 @@ const checkEndGame = (chooses) => {
   );
 };
 
-function stopWinInLastMoveModule(chooses, base) {
+function stopWinInLastMoveModule(chooses, base, items) {
   let ShouldChoose = false;
   const checke = chooses.reduce(
     (previousValue, currentValue) =>
@@ -63,29 +63,28 @@ function stopWinInLastMoveModule(chooses, base) {
 
   if (checke === 2) {
     ShouldChoose = base.find((item) => chooses.indexOf(item) < 0);
-  }
 
-  return ShouldChoose;
-}
-function stopWinInLastMove(chooses, items) {
-  const checker =
-    stopWinInLastMoveModule(chooses, [1, 2, 3]) ||
-    stopWinInLastMoveModule(chooses, [4, 5, 6]) ||
-    stopWinInLastMoveModule(chooses, [7, 8, 9]) ||
-    stopWinInLastMoveModule(chooses, [1, 4, 7]) ||
-    stopWinInLastMoveModule(chooses, [2, 5, 8]) ||
-    stopWinInLastMoveModule(chooses, [3, 6, 9]) ||
-    stopWinInLastMoveModule(chooses, [1, 5, 9]) ||
-    stopWinInLastMoveModule(chooses, [3, 5, 7]);
-
-  console.log(checker);
-  if (checker === false) {
-    return false;
-  } else if (items[checker - 1] === null) {
-    return checker;
+    if (items[ShouldChoose - 1] === null) {
+      return ShouldChoose;
+    } else {
+      return false;
+    }
   } else {
     return false;
   }
+}
+function stopWinInLastMove(chooses, items) {
+  const checker =
+    stopWinInLastMoveModule(chooses, [1, 2, 3], items) ||
+    stopWinInLastMoveModule(chooses, [4, 5, 6], items) ||
+    stopWinInLastMoveModule(chooses, [7, 8, 9], items) ||
+    stopWinInLastMoveModule(chooses, [1, 4, 7], items) ||
+    stopWinInLastMoveModule(chooses, [2, 5, 8], items) ||
+    stopWinInLastMoveModule(chooses, [3, 6, 9], items) ||
+    stopWinInLastMoveModule(chooses, [1, 5, 9], items) ||
+    stopWinInLastMoveModule(chooses, [3, 5, 7], items);
+
+  return checker;
 }
 
 export default {
@@ -127,11 +126,23 @@ export default {
           index = 4;
         } else if (
           stopWinInLastMove(
+            [...this.enemyChooses].map((item) => item + 1),
+            [...this.items]
+          ) !== false
+        ) {
+          console.log("go to wining");
+          index =
+            stopWinInLastMove(
+              [...this.enemyChooses].map((item) => item + 1),
+              [...this.items]
+            ) - 1;
+        } else if (
+          stopWinInLastMove(
             [...this.myChooses].map((item) => item + 1),
             [...this.items]
           ) !== false
         ) {
-          console.log("slam");
+          console.log("stop losing");
           index =
             stopWinInLastMove(
               [...this.myChooses].map((item) => item + 1),
