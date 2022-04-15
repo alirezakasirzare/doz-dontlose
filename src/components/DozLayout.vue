@@ -53,7 +53,7 @@ const checkEndGame = (chooses) => {
   );
 };
 
-function stopWinInLastMoveModule(chooses, base, items) {
+function moveWhenTowItemFileInOneRowModule(chooses, base, items) {
   let ShouldChoose = false;
   const checke = chooses.reduce(
     (previousValue, currentValue) =>
@@ -73,16 +73,16 @@ function stopWinInLastMoveModule(chooses, base, items) {
     return false;
   }
 }
-function stopWinInLastMove(chooses, items) {
+function moveWhenTowItemFileInOneRow(chooses, items) {
   const checker =
-    stopWinInLastMoveModule(chooses, [1, 2, 3], items) ||
-    stopWinInLastMoveModule(chooses, [4, 5, 6], items) ||
-    stopWinInLastMoveModule(chooses, [7, 8, 9], items) ||
-    stopWinInLastMoveModule(chooses, [1, 4, 7], items) ||
-    stopWinInLastMoveModule(chooses, [2, 5, 8], items) ||
-    stopWinInLastMoveModule(chooses, [3, 6, 9], items) ||
-    stopWinInLastMoveModule(chooses, [1, 5, 9], items) ||
-    stopWinInLastMoveModule(chooses, [3, 5, 7], items);
+    moveWhenTowItemFileInOneRowModule(chooses, [1, 2, 3], items) ||
+    moveWhenTowItemFileInOneRowModule(chooses, [4, 5, 6], items) ||
+    moveWhenTowItemFileInOneRowModule(chooses, [7, 8, 9], items) ||
+    moveWhenTowItemFileInOneRowModule(chooses, [1, 4, 7], items) ||
+    moveWhenTowItemFileInOneRowModule(chooses, [2, 5, 8], items) ||
+    moveWhenTowItemFileInOneRowModule(chooses, [3, 6, 9], items) ||
+    moveWhenTowItemFileInOneRowModule(chooses, [1, 5, 9], items) ||
+    moveWhenTowItemFileInOneRowModule(chooses, [3, 5, 7], items);
 
   return checker;
 }
@@ -119,37 +119,36 @@ export default {
           .filter((item) => item !== undefined);
 
         const newItems = [...this.items];
-        // step one -> chose the middle item
         let index;
         if (notChoosedYet.indexOf(4) >= 0) {
-          console.log("if");
+          // step one -> choose the middle item if not choose yet
           index = 4;
         } else if (
-          stopWinInLastMove(
+          moveWhenTowItemFileInOneRow(
             [...this.enemyChooses].map((item) => item + 1),
             [...this.items]
           ) !== false
         ) {
-          console.log("go to wining");
+          // step two -> choose the right item for win
           index =
-            stopWinInLastMove(
+            moveWhenTowItemFileInOneRow(
               [...this.enemyChooses].map((item) => item + 1),
               [...this.items]
             ) - 1;
         } else if (
-          stopWinInLastMove(
+          moveWhenTowItemFileInOneRow(
             [...this.myChooses].map((item) => item + 1),
             [...this.items]
           ) !== false
         ) {
-          console.log("stop losing");
+          // step three -> choose the right item for stoping losing
           index =
-            stopWinInLastMove(
+            moveWhenTowItemFileInOneRow(
               [...this.myChooses].map((item) => item + 1),
               [...this.items]
             ) - 1;
         } else {
-          console.log("else");
+          // step three -> choose the random item
           index =
             notChoosedYet[Math.floor(Math.random() * notChoosedYet.length)];
         }
