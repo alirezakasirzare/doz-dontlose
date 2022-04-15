@@ -52,6 +52,38 @@ const checkEndGame = (chooses) => {
     arrayContain(chooses, [3, 5, 7])
   );
 };
+
+function stopWinInLastMoveModule(chooses, base) {
+  let ShouldChoose = false;
+  const checker = chooses.reduce(
+    (previousValue, currentValue) =>
+      base.indexOf(currentValue) >= previousValue
+        ? previousValue + 1
+        : previousValue,
+    0
+  );
+
+  if (checker >= 2) {
+    ShouldChoose = base.find((item) => chooses.indexOf(item) < 0);
+  }
+
+  return ShouldChoose;
+}
+function stopWinInLastMove(chooses, items) {
+  const checker =
+    stopWinInLastMoveModule(chooses, [1, 2, 3]) ||
+    stopWinInLastMoveModule(chooses, [7, 8, 9]) ||
+    stopWinInLastMoveModule(chooses, [1, 4, 7]) ||
+    stopWinInLastMoveModule(chooses, [3, 6, 9]);
+  if (checker === false) {
+    return false;
+  } else if (items[checker - 1] === null) {
+    return checker;
+  } else {
+    return false;
+  }
+}
+
 export default {
   data() {
     return {
@@ -86,8 +118,28 @@ export default {
           .filter((item) => item !== undefined);
 
         const newItems = [...this.items];
-        const index =
-          notChoosedYet[Math.floor(Math.random() * notChoosedYet.length)];
+        // step one -> chose the middle item
+        let index;
+        if (notChoosedYet.indexOf(4) >= 0) {
+          console.log("if");
+          index = 4;
+        } else if (
+          stopWinInLastMove(
+            [...this.myChooses].map((item) => item + 1),
+            [...this.items]
+          ) !== false
+        ) {
+          console.log("slam");
+          index =
+            stopWinInLastMove(
+              [...this.myChooses].map((item) => item + 1),
+              [...this.items]
+            ) - 1;
+        } else {
+          console.log("else");
+          index =
+            notChoosedYet[Math.floor(Math.random() * notChoosedYet.length)];
+        }
         newItems[index] = "enemy";
         this.items = newItems;
         this.enemyChooses = [...this.enemyChooses, index];
