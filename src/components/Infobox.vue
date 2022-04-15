@@ -59,3 +59,12 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.listgroup {
+  @media screen and (max-width: 500px) {
+    width: 100% !important;
+    // height: 300px !important;
+  }
+}
+</style>

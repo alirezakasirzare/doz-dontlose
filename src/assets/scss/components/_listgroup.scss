@@ -1,11 +1,9 @@
 // list group
 .listgroup {
-  position: fixed;
-  top: 20px;
-  right: 20px;
   background-color: #2196f3;
   color: #fff;
   min-width: 200px;
+  max-width: 500px;
   border-radius: 4px;
 
   // list group item

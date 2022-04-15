@@ -2,7 +2,7 @@
   <!-- info box -->
   <Infobox />
   <!-- start layout of doz -->
-  <div class="center h-full">
+  <div class="center height-manager">
     <DozLayout />
   </div>
 </template>
@@ -18,3 +18,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.height-manager {
+  height: calc(100vh - 150px);
+}
+</style>

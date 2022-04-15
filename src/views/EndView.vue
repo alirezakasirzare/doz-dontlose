@@ -1,9 +1,9 @@
 <template>
   <Infobox />
 
-  <div class="center h-full">
+  <div class="center height-manager">
     <!-- start card of end game -->
-    <div class="card card-primary">
+    <div class="card card-primary cars-size-control">
       <!-- title of the card -->
       <div class="card-title" ref="title"></div>
       <!-- body of the card -->
@@ -63,3 +63,16 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.height-manager {
+  height: calc(100vh - 150px);
+}
+
+.cars-size-control {
+  @media screen and (max-width: 500px) {
+    width: 300px !important;
+    // height: 300px !important;
+  }
+}
+</style>

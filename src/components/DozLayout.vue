@@ -211,6 +211,11 @@ export default {
   height: 500px;
   flex-wrap: wrap;
 
+  @media screen and (max-width: 500px) {
+    width: 300px !important;
+    height: 300px !important;
+  }
+
   // doz items
   &-item {
     width: calc(100% / 3);
