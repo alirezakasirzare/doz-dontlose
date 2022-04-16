@@ -17,17 +17,7 @@
 </template>
 
 <script>
-const initialItems = () => [
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-];
+const initialItems = () => Array(42).fill(null);
 
 const arrayContain = (chooses, should) => {
   let willBack = true;
@@ -217,8 +207,8 @@ export default {
 
   // doz items
   &-item {
-    width: calc(100% / 3);
-    height: calc(100% / 3);
+    width: calc(100% / 7);
+    height: calc(100% / 6);
     border-left: 1px solid #bdbdbd;
     border-bottom: 1px solid #bdbdbd;
     transition: 0.4s ease background;
@@ -231,11 +221,11 @@ export default {
     }
 
     // delete border of last children
-    &:nth-child(3n) {
+    &:nth-child(7n) {
       border-left: none;
     }
 
-    &:nth-child(n + 7) {
+    &:nth-child(n + 36) {
       border-bottom: none;
     }
 
