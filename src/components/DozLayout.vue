@@ -6,13 +6,11 @@
       class="doz-item"
       v-for="(item, index) in items"
       :key="index"
-      @click="
-        () => {
-          clickItemHandeler(index);
-        }
-      "
       :class="{ [`${item}`]: item, 'can-hover': turn == 'me' }"
-    ></div>
+    >
+      {{ index }}
+    </div>
+    <div class="doz-click" v-for="item in 7" :key="item" v-text="item"></div>
   </main>
 </template>
 
@@ -30,16 +28,24 @@ const arrayContain = (chooses, should) => {
   return willBack;
 };
 
+function createItemsWithPatternRow(row) {
+  let myArray = [];
+
+  for (let index = 7 * row - 6; index <= 7 * row; index++) {
+    myArray.push(index);
+  }
+
+  return myArray;
+}
+
 const checkEndGame = (chooses) => {
   return (
-    arrayContain(chooses, [1, 2, 3]) ||
-    arrayContain(chooses, [4, 5, 6]) ||
-    arrayContain(chooses, [7, 8, 9]) ||
-    arrayContain(chooses, [1, 4, 7]) ||
-    arrayContain(chooses, [2, 5, 8]) ||
-    arrayContain(chooses, [3, 6, 9]) ||
-    arrayContain(chooses, [1, 5, 9]) ||
-    arrayContain(chooses, [3, 5, 7])
+    arrayContain(chooses, createItemsWithPatternRow(1)) ||
+    arrayContain(chooses, createItemsWithPatternRow(2)) ||
+    arrayContain(chooses, createItemsWithPatternRow(3)) ||
+    arrayContain(chooses, createItemsWithPatternRow(4)) ||
+    arrayContain(chooses, createItemsWithPatternRow(5)) ||
+    arrayContain(chooses, createItemsWithPatternRow(6))
   );
 };
 
@@ -65,14 +71,36 @@ function moveWhenTowItemFileInOneRowModule(chooses, base, items) {
 }
 function moveWhenTowItemFileInOneRow(chooses, items) {
   const checker =
-    moveWhenTowItemFileInOneRowModule(chooses, [1, 2, 3], items) ||
-    moveWhenTowItemFileInOneRowModule(chooses, [4, 5, 6], items) ||
-    moveWhenTowItemFileInOneRowModule(chooses, [7, 8, 9], items) ||
-    moveWhenTowItemFileInOneRowModule(chooses, [1, 4, 7], items) ||
-    moveWhenTowItemFileInOneRowModule(chooses, [2, 5, 8], items) ||
-    moveWhenTowItemFileInOneRowModule(chooses, [3, 6, 9], items) ||
-    moveWhenTowItemFileInOneRowModule(chooses, [1, 5, 9], items) ||
-    moveWhenTowItemFileInOneRowModule(chooses, [3, 5, 7], items);
+    moveWhenTowItemFileInOneRowModule(
+      chooses,
+      createItemsWithPatternRow(1),
+      items
+    ) ||
+    moveWhenTowItemFileInOneRowModule(
+      chooses,
+      createItemsWithPatternRow(2),
+      items
+    ) ||
+    moveWhenTowItemFileInOneRowModule(
+      chooses,
+      createItemsWithPatternRow(3),
+      items
+    ) ||
+    moveWhenTowItemFileInOneRowModule(
+      chooses,
+      createItemsWithPatternRow(4),
+      items
+    ) ||
+    moveWhenTowItemFileInOneRowModule(
+      chooses,
+      createItemsWithPatternRow(5),
+      items
+    ) ||
+    moveWhenTowItemFileInOneRowModule(
+      chooses,
+      createItemsWithPatternRow(6),
+      items
+    );
 
   return checker;
 }
@@ -208,25 +236,14 @@ export default {
   // doz items
   &-item {
     width: calc(100% / 7);
-    height: calc(100% / 6);
+    height: calc(100% / 7);
     border-left: 1px solid #bdbdbd;
     border-bottom: 1px solid #bdbdbd;
-    transition: 0.4s ease background;
     position: relative;
-
-    // hover of items of doz layout
-    &.can-hover:hover:not(.enemy):not(.me) {
-      background-color: #eee;
-      cursor: pointer;
-    }
 
     // delete border of last children
     &:nth-child(7n) {
       border-left: none;
-    }
-
-    &:nth-child(n + 36) {
-      border-bottom: none;
     }
 
     // my choose icon
@@ -255,6 +272,23 @@ export default {
 
     &.enemy::before {
       transform: translate(-50%, -50%) rotate(-45deg);
+    }
+  }
+  // doz click
+  .doz-click {
+    width: calc(100% / 7);
+    height: calc(100% / 7);
+    background-color: #2196f3;
+    border: 1px solid #bdbdbd;
+    @extend .center;
+    color: #eee;
+    cursor: pointer;
+    transition: 0.4s ease background;
+    &:hover {
+      background-color: #1e88e5;
+    }
+    &:active {
+      background-color: #1565c0;
     }
   }
 }
