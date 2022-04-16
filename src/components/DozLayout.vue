@@ -10,7 +10,13 @@
     >
       {{ index }}
     </div>
-    <div class="doz-click" v-for="item in 7" :key="item" v-text="item"></div>
+    <div
+      class="doz-click"
+      v-for="item in 7"
+      :key="item - 1"
+      @click="clickItemHandeler(item - 1)"
+      v-text="item - 1"
+    ></div>
   </main>
 </template>
 
@@ -123,9 +129,14 @@ export default {
     clickItemHandeler(index) {
       if (this.turn === "me" && !this.items[index]) {
         const newItems = [...this.items];
-        newItems[index] = "me";
-        this.items = newItems;
-        this.myChooses = [...this.myChooses, index];
+        for (let i = 6 * 7 - (7 - index); i >= 0 + index; i -= 7) {
+          if (this.items[i] === null) {
+            newItems[i] = "me";
+            this.items = newItems;
+            this.myChooses = [...this.myChooses, i];
+            break;
+          }
+        }
       }
     },
     enemyChoose() {
@@ -280,6 +291,7 @@ export default {
     height: calc(100% / 7);
     background-color: #2196f3;
     border: 1px solid #bdbdbd;
+    user-select: none;
     @extend .center;
     color: #eee;
     cursor: pointer;
