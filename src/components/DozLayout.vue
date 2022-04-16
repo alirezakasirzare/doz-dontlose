@@ -141,50 +141,20 @@ export default {
     },
     enemyChoose() {
       setTimeout(() => {
-        const notChoosedYet = [...this.items]
-          .map((item, index) => {
-            if (!item) return index;
-          })
-          .filter((item) => item !== undefined);
-
         const newItems = [...this.items];
-        let index;
-        if (notChoosedYet.indexOf(4) >= 0) {
-          // step one -> choose the middle item if not choose yet
-          index = 4;
-        } else if (
-          moveWhenTowItemFileInOneRow(
-            [...this.enemyChooses].map((item) => item + 1),
-            [...this.items]
-          ) !== false
-        ) {
-          // step two -> choose the right item for win
-          index =
-            moveWhenTowItemFileInOneRow(
-              [...this.enemyChooses].map((item) => item + 1),
-              [...this.items]
-            ) - 1;
-        } else if (
-          moveWhenTowItemFileInOneRow(
-            [...this.myChooses].map((item) => item + 1),
-            [...this.items]
-          ) !== false
-        ) {
-          // step three -> choose the right item for stoping losing
-          index =
-            moveWhenTowItemFileInOneRow(
-              [...this.myChooses].map((item) => item + 1),
-              [...this.items]
-            ) - 1;
-        } else {
-          // step three -> choose the random item
-          index =
-            notChoosedYet[Math.floor(Math.random() * notChoosedYet.length)];
+        let index = Math.floor(Math.random() * 7);
+        while (this.items[index] !== null) {
+          index = Math.floor(Math.random() * 7);
         }
-        newItems[index] = "enemy";
-        this.items = newItems;
-        this.enemyChooses = [...this.enemyChooses, index];
-      }, 3000);
+        for (let i = 6 * 7 - (7 - index); i >= 0 + index; i -= 7) {
+          if (this.items[i] === null) {
+            newItems[i] = "enemy";
+            this.items = newItems;
+            this.enemyChooses = [...this.enemyChooses, i];
+            break;
+          }
+        }
+      }, 1000);
     },
   },
   watch: {
@@ -290,7 +260,7 @@ export default {
     width: calc(100% / 7);
     height: calc(100% / 7);
     background-color: #2196f3;
-    border: 1px solid #bdbdbd;
+    border-right: 1px solid #bdbdbd;
     user-select: none;
     @extend .center;
     color: #eee;
