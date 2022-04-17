@@ -24,7 +24,8 @@
 </template>
 
 <script>
-const checkOurTargetHasInArray = (chooses, should, howMany) => {
+import { nextTick } from "@vue/runtime-core";
+const checkOurTargetHasInArrayForEndGame = (chooses, should, howMany) => {
   let checker = 0;
   let willReturn = false;
   let itemsMakeGameEnd = [];
@@ -35,14 +36,73 @@ const checkOurTargetHasInArray = (chooses, should, howMany) => {
         itemsMakeGameEnd.push(item);
       }
     } else {
+      if (!willReturn) {
+        itemsMakeGameEnd = [];
+      }
       checker = 0;
     }
-    if (checker === howMany) {
+    if (checker >= howMany) {
       willReturn = true;
     }
   });
 
   return willReturn ? itemsMakeGameEnd : false;
+};
+
+const checkOurTargetHasInArrayForEnemy = (
+  chooses,
+  should,
+  howMany,
+  items,
+  isTwoWay = true
+) => {
+  let checker = 0;
+  let willReturn = false;
+  let itemsMakeGameEnd = [];
+  should.forEach((item) => {
+    if (chooses.indexOf(item) >= 0) {
+      checker++;
+      if (!willReturn) {
+        itemsMakeGameEnd.push(item);
+      }
+    } else {
+      if (!willReturn) {
+        itemsMakeGameEnd = [];
+      }
+      checker = 0;
+    }
+
+    if (checker >= howMany) {
+      if (isTwoWay) {
+        const beforeItem =
+          items[should[should.indexOf(itemsMakeGameEnd[0]) - 1]];
+        const nextItem =
+          items[
+            should[
+              should.indexOf(itemsMakeGameEnd[itemsMakeGameEnd.length - 1]) + 1
+            ]
+          ];
+        if (beforeItem === null && nextItem === null) {
+          willReturn = beforeItem;
+        }
+      } else {
+        const beforeItem = should[should.indexOf(itemsMakeGameEnd[0]) - 1];
+        const nextItem =
+          should[
+            should.indexOf(itemsMakeGameEnd[itemsMakeGameEnd.length - 1]) + 1
+          ];
+
+        if (items[beforeItem] === null || items[nextItem] === null) {
+          willReturn = items[beforeItem] === null ? beforeItem : nextItem;
+          if (items[willReturn + 7] === null) {
+            willReturn = false;
+          }
+        }
+      }
+    }
+  });
+
+  return willReturn;
 };
 
 function createItemsWithPatternRow() {
@@ -139,7 +199,11 @@ export default {
         ...createItemsWithPatternColumn(),
         ...createItemsWithPatternMultiple(),
       ].forEach((row) => {
-        const checkWin = checkOurTargetHasInArray(chooses, row, 4);
+        const checkWin = checkOurTargetHasInArrayForEndGame(
+          [...chooses],
+          row,
+          4
+        );
         if (checkWin) {
           this.itemsMakeGameEnd = checkWin;
           willReturn = true;
@@ -164,21 +228,24 @@ export default {
       return willReturn;
     },
     chooseEnemyWhenTwo() {
-      // let willReturn = false;
-      // [
-      //   ...createItemsWithPatternRow(),
-      //   ...createItemsWithPatternColumn(),
-      //   ...createItemsWithPatternMultiple(),
-      // ].forEach((row) => {
-      //   const checkWin = checkOurTargetHasInArray(chooses, row, 2);
-      //   if (checkWin) {
-      //     this.itemsMakeGameEnd = checkWin;
-      //     willReturn = true;
-      //   }
-      // });
+      let willReturn = false;
+      [
+        ...createItemsWithPatternRow(),
+        ...createItemsWithPatternColumn(),
+        ...createItemsWithPatternMultiple(),
+      ].forEach((row) => {
+        if (!willReturn) {
+          willReturn = checkOurTargetHasInArrayForEnemy(
+            [...this.myChooses],
+            row,
+            3,
+            [...this.items],
+            false
+          );
+        }
+      });
 
-      // return willReturn;
-      return false;
+      return willReturn;
     },
     clickItemHandeler(index) {
       if (this.turn === "me" && !this.items[index]) {
