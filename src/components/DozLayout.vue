@@ -21,38 +21,103 @@
 </template>
 
 <script>
-const initialItems = () => Array(42).fill(null);
-
-const arrayContain = (chooses, should) => {
-  let willBack = true;
+const checkOurTargetHasInArray = (chooses, should, howMany) => {
+  let checker = 0;
+  let willReturn = false;
   should.forEach((item) => {
-    if (!chooses.includes(item)) {
-      willBack = false;
+    checker = chooses.indexOf(item) >= 0 ? checker + 1 : 0;
+    if (checker === howMany) {
+      willReturn = true;
     }
   });
 
-  return willBack;
+  return willReturn;
 };
 
-function createItemsWithPatternRow(row) {
-  let myArray = [];
+function createItemsWithPatternRow() {
+  let myAllArray = [];
 
-  for (let index = 7 * row - 6; index <= 7 * row; index++) {
-    myArray.push(index);
+  for (let i = 1; i < 7; i++) {
+    let MyRowArray = [];
+    for (let index = 7 * i - 7; index < 7 * i; index++) {
+      MyRowArray.push(index);
+    }
+
+    myAllArray.push(MyRowArray);
   }
 
-  return myArray;
+  return myAllArray;
 }
 
+function createItemsWithPatternColumn() {
+  let myAllArray = [];
+
+  for (let i = 0; i < 7; i++) {
+    let MyRowArray = [];
+    for (let index = i; index <= 41 - (6 - i) * i; index += 7) {
+      MyRowArray.push(index);
+    }
+
+    myAllArray.push(MyRowArray);
+  }
+
+  return myAllArray;
+}
+function createItemsWithPatternMultiple() {
+  let myAllArray = [];
+
+  for (let i = 1; i < 4; i++) {
+    let MyRowArray = [];
+    for (let index = i; index <= 41 - (i - 1) * 7; index += 8) {
+      MyRowArray.push(index);
+    }
+
+    myAllArray.push(MyRowArray);
+  }
+
+  for (let i = 38; i <= 40; i++) {
+    let MyRowArray = [];
+    for (let index = i; index >= (40 - i) * 7; index -= 8) {
+      MyRowArray.push(index);
+    }
+
+    myAllArray.push(MyRowArray);
+  }
+
+  for (let i = 5; i >= 3; i--) {
+    let MyRowArray = [];
+    for (let index = i; index <= 35 - (5 - i) * 7; index += 6) {
+      MyRowArray.push(index);
+    }
+
+    myAllArray.push(MyRowArray);
+  }
+
+  for (let i = 36; i <= 38; i++) {
+    let MyRowArray = [];
+    for (let index = i; index >= (i - 35) * 7 - 1; index -= 6) {
+      MyRowArray.push(index);
+    }
+
+    myAllArray.push(MyRowArray);
+  }
+
+  return myAllArray;
+}
 const checkEndGame = (chooses) => {
-  return (
-    arrayContain(chooses, createItemsWithPatternRow(1)) ||
-    arrayContain(chooses, createItemsWithPatternRow(2)) ||
-    arrayContain(chooses, createItemsWithPatternRow(3)) ||
-    arrayContain(chooses, createItemsWithPatternRow(4)) ||
-    arrayContain(chooses, createItemsWithPatternRow(5)) ||
-    arrayContain(chooses, createItemsWithPatternRow(6))
-  );
+  let willReturn = false;
+  [
+    ...createItemsWithPatternRow(),
+    ...createItemsWithPatternColumn(),
+    ...createItemsWithPatternMultiple(),
+  ].forEach((row) => {
+    const checkWin = checkOurTargetHasInArray(chooses, row, 4);
+    if (checkWin) {
+      willReturn = true;
+    }
+  });
+
+  return willReturn;
 };
 
 function moveWhenTowItemFileInOneRowModule(chooses, base, items) {
@@ -114,7 +179,7 @@ function moveWhenTowItemFileInOneRow(chooses, items) {
 export default {
   data() {
     return {
-      items: initialItems(),
+      items: Array(42).fill(null),
       myChooses: [],
       enemyChooses: [],
     };
@@ -159,7 +224,7 @@ export default {
   },
   watch: {
     myChooses(newValue) {
-      if (checkEndGame(newValue.map((item) => item + 1))) {
+      if (checkEndGame([...newValue])) {
         // win
         this.$store.commit("addMyScore");
         this.$store.commit("chnageStatus", "win");
@@ -177,7 +242,7 @@ export default {
       }
     },
     enemyChooses(newValue) {
-      if (checkEndGame(newValue.map((item) => item + 1))) {
+      if (false) {
         // lose
         this.$store.commit("addEnemyScore");
         this.$store.commit("chnageTurn", "end");
