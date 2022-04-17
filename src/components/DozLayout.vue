@@ -6,7 +6,11 @@
       class="doz-item"
       v-for="(item, index) in items"
       :key="index"
-      :class="{ [`${item}`]: item, 'can-hover': turn == 'me' }"
+      :class="{
+        [`${item}`]: item,
+        'can-hover': turn == 'me',
+        'doz-item-success': itemsMakeGameEnd.indexOf(index) >= 0,
+      }"
     >
       {{ index }}
     </div>
@@ -15,7 +19,6 @@
       v-for="item in 7"
       :key="item - 1"
       @click="clickItemHandeler(item - 1)"
-      v-text="item - 1"
     ></div>
   </main>
 </template>
@@ -24,14 +27,20 @@
 const checkOurTargetHasInArray = (chooses, should, howMany) => {
   let checker = 0;
   let willReturn = false;
+  let itemsMakeGameEnd = [];
   should.forEach((item) => {
-    checker = chooses.indexOf(item) >= 0 ? checker + 1 : 0;
+    if (chooses.indexOf(item) >= 0) {
+      checker++;
+      itemsMakeGameEnd.push(item);
+    } else {
+      checker = 0;
+    }
     if (checker === howMany) {
       willReturn = true;
     }
   });
 
-  return willReturn;
+  return willReturn ? itemsMakeGameEnd : false;
 };
 
 function createItemsWithPatternRow() {
@@ -104,6 +113,80 @@ function createItemsWithPatternMultiple() {
 
   return myAllArray;
 }
+
+// function moveWhenTowItemFileInOneRowModule(chooses, base, items) {
+//   let ShouldChoose = false;
+//   const checke = chooses.reduce(
+//     (previousValue, currentValue) =>
+//       base.indexOf(currentValue) >= 0 ? previousValue + 1 : previousValue,
+//     0
+//   );
+
+//   if (checke === 2) {
+//     ShouldChoose = base.find((item) => chooses.indexOf(item) < 0);
+
+//     if (items[ShouldChoose - 1] === null) {
+//       return ShouldChoose;
+//     } else {
+//       return false;
+//     }
+//   } else {
+//     return false;
+//   }
+// }
+// function moveWhenTowItemFileInOneRow(chooses, items) {
+//   const checker =
+//     moveWhenTowItemFileInOneRowModule(
+//       chooses,
+//       createItemsWithPatternRow(1),
+//       items
+//     ) ||
+//     moveWhenTowItemFileInOneRowModule(
+//       chooses,
+//       createItemsWithPatternRow(2),
+//       items
+//     ) ||
+//     moveWhenTowItemFileInOneRowModule(
+//       chooses,
+//       createItemsWithPatternRow(3),
+//       items
+//     ) ||
+//     moveWhenTowItemFileInOneRowModule(
+//       chooses,
+//       createItemsWithPatternRow(4),
+//       items
+//     ) ||
+//     moveWhenTowItemFileInOneRowModule(
+//       chooses,
+//       createItemsWithPatternRow(5),
+//       items
+//     ) ||
+//     moveWhenTowItemFileInOneRowModule(
+//       chooses,
+//       createItemsWithPatternRow(6),
+//       items
+//     );
+
+//   return checker;
+// }
+
+export default {
+  data() {
+    return {
+      items: Array(42).fill(null),
+      myChooses: [],
+      enemyChooses: [],
+      itemsMakeGameEnd: [],
+    };
+  },
+
+  computed: {
+    turn() {
+      return this.$store.state.turn;
+    },
+  },
+  methods: {
+    /*
 const checkEndGame = (chooses) => {
   let willReturn = false;
   [
@@ -119,78 +202,23 @@ const checkEndGame = (chooses) => {
 
   return willReturn;
 };
+    */
+    checkEndGame(chooses) {
+      let willReturn = false;
+      [
+        ...createItemsWithPatternRow(),
+        ...createItemsWithPatternColumn(),
+        ...createItemsWithPatternMultiple(),
+      ].forEach((row) => {
+        const checkWin = checkOurTargetHasInArray(chooses, row, 4);
+        if (checkWin) {
+          this.itemsMakeGameEnd = checkWin;
+          willReturn = true;
+        }
+      });
 
-function moveWhenTowItemFileInOneRowModule(chooses, base, items) {
-  let ShouldChoose = false;
-  const checke = chooses.reduce(
-    (previousValue, currentValue) =>
-      base.indexOf(currentValue) >= 0 ? previousValue + 1 : previousValue,
-    0
-  );
-
-  if (checke === 2) {
-    ShouldChoose = base.find((item) => chooses.indexOf(item) < 0);
-
-    if (items[ShouldChoose - 1] === null) {
-      return ShouldChoose;
-    } else {
-      return false;
-    }
-  } else {
-    return false;
-  }
-}
-function moveWhenTowItemFileInOneRow(chooses, items) {
-  const checker =
-    moveWhenTowItemFileInOneRowModule(
-      chooses,
-      createItemsWithPatternRow(1),
-      items
-    ) ||
-    moveWhenTowItemFileInOneRowModule(
-      chooses,
-      createItemsWithPatternRow(2),
-      items
-    ) ||
-    moveWhenTowItemFileInOneRowModule(
-      chooses,
-      createItemsWithPatternRow(3),
-      items
-    ) ||
-    moveWhenTowItemFileInOneRowModule(
-      chooses,
-      createItemsWithPatternRow(4),
-      items
-    ) ||
-    moveWhenTowItemFileInOneRowModule(
-      chooses,
-      createItemsWithPatternRow(5),
-      items
-    ) ||
-    moveWhenTowItemFileInOneRowModule(
-      chooses,
-      createItemsWithPatternRow(6),
-      items
-    );
-
-  return checker;
-}
-
-export default {
-  data() {
-    return {
-      items: Array(42).fill(null),
-      myChooses: [],
-      enemyChooses: [],
-    };
-  },
-
-  computed: {
-    turn() {
-      return this.$store.state.turn;
+      return willReturn;
     },
-  },
-  methods: {
     clickItemHandeler(index) {
       if (this.turn === "me" && !this.items[index]) {
         const newItems = [...this.items];
@@ -224,7 +252,7 @@ export default {
   },
   watch: {
     myChooses(newValue) {
-      if (checkEndGame([...newValue])) {
+      if (this.checkEndGame([...newValue])) {
         // win
         this.$store.commit("addMyScore");
         this.$store.commit("chnageStatus", "win");
@@ -242,7 +270,7 @@ export default {
       }
     },
     enemyChooses(newValue) {
-      if (false) {
+      if (this.checkEndGame([...newValue])) {
         // lose
         this.$store.commit("addEnemyScore");
         this.$store.commit("chnageTurn", "end");
@@ -287,6 +315,9 @@ export default {
     border-bottom: 1px solid #bdbdbd;
     position: relative;
 
+    &-success {
+      background-color: #607d8b;
+    }
     // delete border of last children
     &:nth-child(7n) {
       border-left: none;
@@ -327,7 +358,6 @@ export default {
     background-color: #2196f3;
     border-right: 1px solid #bdbdbd;
     user-select: none;
-    @extend .center;
     color: #eee;
     cursor: pointer;
     transition: 0.4s ease background;
