@@ -49,53 +49,6 @@ const checkOurTargetHasInArrayForEndGame = (chooses, should, howMany) => {
   return willReturn ? itemsMakeGameEnd : false;
 };
 
-const checkOurTargetHasInArrayForEnemy = (
-  chooses,
-  should,
-  howMany,
-  items,
-  advance = false
-) => {
-  let checker = 0;
-  let willReturn = false;
-  let itemsMakeGameEnd = [];
-  should.forEach((item) => {
-    if (chooses.indexOf(item) >= 0) {
-      checker++;
-      if (!willReturn) {
-        itemsMakeGameEnd.push(item);
-      }
-    } else {
-      if (!willReturn) {
-        itemsMakeGameEnd = [];
-      }
-      checker = 0;
-    }
-
-    if (checker >= howMany) {
-      const beforeItem = should[should.indexOf(itemsMakeGameEnd[0]) - 1];
-      const nextItem =
-        should[
-          should.indexOf(itemsMakeGameEnd[itemsMakeGameEnd.length - 1]) + 1
-        ];
-
-      if (items[beforeItem] === null || items[nextItem] === null) {
-        if (advance && items[nextItem] === null && items[beforeItem] === null) {
-          const advanceTarfet = should[should.indexOf(nextItem) + 1];
-          willReturn = items[advanceTarfet] === "me" ? nextItem : beforeItem;
-        } else {
-          willReturn = items[beforeItem] === null ? beforeItem : nextItem;
-        }
-        if (items[willReturn + 7] === null) {
-          willReturn = false;
-        }
-      }
-    }
-  });
-
-  return willReturn;
-};
-
 function createItemsWithPatternRow() {
   let myAllArray = [];
 
@@ -174,6 +127,7 @@ export default {
       myChooses: [],
       enemyChooses: [],
       itemsMakeGameEnd: [],
+      ignoreForChooseEnemy: [],
     };
   },
 
@@ -183,6 +137,73 @@ export default {
     },
   },
   methods: {
+    checkOurTargetHasInArrayForEnemy(
+      chooses,
+      should,
+      howMany,
+      items,
+      advance = false,
+      three = false
+    ) {
+      let checker = 0;
+      let willReturn = false;
+      let itemsMakeGameEnd = [];
+      should.forEach((item) => {
+        if (chooses.indexOf(item) >= 0) {
+          checker++;
+          if (!willReturn) {
+            itemsMakeGameEnd.push(item);
+          }
+        } else {
+          if (!willReturn) {
+            itemsMakeGameEnd = [];
+          }
+          checker = 0;
+        }
+
+        if (checker >= howMany) {
+          const beforeItem = should[should.indexOf(itemsMakeGameEnd[0]) - 1];
+          const nextItem =
+            should[
+              should.indexOf(itemsMakeGameEnd[itemsMakeGameEnd.length - 1]) + 1
+            ];
+
+          if (items[beforeItem] === null || items[nextItem] === null) {
+            if (
+              advance &&
+              items[nextItem] === null &&
+              items[beforeItem] === null
+            ) {
+              const advanceTarget = should[should.indexOf(nextItem) + 1];
+              willReturn =
+                items[advanceTarget] === "me" ? nextItem : beforeItem;
+              if ([...this.ignoreForChooseEnemy].indexOf(willReturn) >= 0) {
+                willReturn = false;
+              }
+            } else {
+              willReturn = items[beforeItem] === null ? beforeItem : nextItem;
+              if (
+                [...this.ignoreForChooseEnemy].indexOf(willReturn) >= 0 &&
+                advance
+              ) {
+                willReturn = false;
+              }
+            }
+            if (items[willReturn + 7] === null) {
+              if (
+                three &&
+                [...this.ignoreForChooseEnemy].indexOf(willReturn + 7) < 0
+              ) {
+                this.ignoreForChooseEnemy.push(willReturn + 7);
+              }
+              willReturn = false;
+            }
+          }
+        }
+      });
+
+      return willReturn;
+    },
     checkEndGame(chooses) {
       let willReturn = false;
       [
@@ -226,7 +247,7 @@ export default {
         ...createItemsWithPatternMultiple(),
       ].forEach((row) => {
         if (!willReturn) {
-          willReturn = checkOurTargetHasInArrayForEnemy(
+          willReturn = this.checkOurTargetHasInArrayForEnemy(
             [...this.myChooses],
             row,
             2,
@@ -249,7 +270,7 @@ export default {
         ...createItemsWithPatternMultiple(),
       ].forEach((row) => {
         if (!willReturn) {
-          willReturn = checkOurTargetHasInArrayForEnemy(
+          willReturn = this.checkOurTargetHasInArrayForEnemy(
             [...this.enemyChooses],
             row,
             3,
@@ -271,11 +292,13 @@ export default {
         ...createItemsWithPatternMultiple(),
       ].forEach((row) => {
         if (!willReturn) {
-          willReturn = checkOurTargetHasInArrayForEnemy(
+          willReturn = this.checkOurTargetHasInArrayForEnemy(
             [...this.myChooses],
             row,
             3,
-            [...this.items]
+            [...this.items],
+            false,
+            true
           );
           if (willReturn) {
             console.log("stop win three");
