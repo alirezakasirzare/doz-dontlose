@@ -31,7 +31,9 @@ const checkOurTargetHasInArray = (chooses, should, howMany) => {
   should.forEach((item) => {
     if (chooses.indexOf(item) >= 0) {
       checker++;
-      itemsMakeGameEnd.push(item);
+      if (!willReturn) {
+        itemsMakeGameEnd.push(item);
+      }
     } else {
       checker = 0;
     }
@@ -63,7 +65,7 @@ function createItemsWithPatternColumn() {
 
   for (let i = 0; i < 7; i++) {
     let MyRowArray = [];
-    for (let index = i; index <= 41 - (6 - i) * i; index += 7) {
+    for (let index = i; index <= 35 + i; index += 7) {
       MyRowArray.push(index);
     }
 
@@ -114,62 +116,6 @@ function createItemsWithPatternMultiple() {
   return myAllArray;
 }
 
-// function moveWhenTowItemFileInOneRowModule(chooses, base, items) {
-//   let ShouldChoose = false;
-//   const checke = chooses.reduce(
-//     (previousValue, currentValue) =>
-//       base.indexOf(currentValue) >= 0 ? previousValue + 1 : previousValue,
-//     0
-//   );
-
-//   if (checke === 2) {
-//     ShouldChoose = base.find((item) => chooses.indexOf(item) < 0);
-
-//     if (items[ShouldChoose - 1] === null) {
-//       return ShouldChoose;
-//     } else {
-//       return false;
-//     }
-//   } else {
-//     return false;
-//   }
-// }
-// function moveWhenTowItemFileInOneRow(chooses, items) {
-//   const checker =
-//     moveWhenTowItemFileInOneRowModule(
-//       chooses,
-//       createItemsWithPatternRow(1),
-//       items
-//     ) ||
-//     moveWhenTowItemFileInOneRowModule(
-//       chooses,
-//       createItemsWithPatternRow(2),
-//       items
-//     ) ||
-//     moveWhenTowItemFileInOneRowModule(
-//       chooses,
-//       createItemsWithPatternRow(3),
-//       items
-//     ) ||
-//     moveWhenTowItemFileInOneRowModule(
-//       chooses,
-//       createItemsWithPatternRow(4),
-//       items
-//     ) ||
-//     moveWhenTowItemFileInOneRowModule(
-//       chooses,
-//       createItemsWithPatternRow(5),
-//       items
-//     ) ||
-//     moveWhenTowItemFileInOneRowModule(
-//       chooses,
-//       createItemsWithPatternRow(6),
-//       items
-//     );
-
-//   return checker;
-// }
-
 export default {
   data() {
     return {
@@ -186,23 +132,6 @@ export default {
     },
   },
   methods: {
-    /*
-const checkEndGame = (chooses) => {
-  let willReturn = false;
-  [
-    ...createItemsWithPatternRow(),
-    ...createItemsWithPatternColumn(),
-    ...createItemsWithPatternMultiple(),
-  ].forEach((row) => {
-    const checkWin = checkOurTargetHasInArray(chooses, row, 4);
-    if (checkWin) {
-      willReturn = true;
-    }
-  });
-
-  return willReturn;
-};
-    */
     checkEndGame(chooses) {
       let willReturn = false;
       [
@@ -218,6 +147,38 @@ const checkEndGame = (chooses) => {
       });
 
       return willReturn;
+    },
+    chooseEnemyRandom() {
+      let index = Math.floor(Math.random() * 7);
+      let willReturn = 0;
+      while (this.items[index] !== null) {
+        index = Math.floor(Math.random() * 7);
+      }
+      for (let i = 6 * 7 - (7 - index); i >= 0 + index; i -= 7) {
+        if (this.items[i] === null) {
+          willReturn = i;
+          break;
+        }
+      }
+
+      return willReturn;
+    },
+    chooseEnemyWhenTwo() {
+      // let willReturn = false;
+      // [
+      //   ...createItemsWithPatternRow(),
+      //   ...createItemsWithPatternColumn(),
+      //   ...createItemsWithPatternMultiple(),
+      // ].forEach((row) => {
+      //   const checkWin = checkOurTargetHasInArray(chooses, row, 2);
+      //   if (checkWin) {
+      //     this.itemsMakeGameEnd = checkWin;
+      //     willReturn = true;
+      //   }
+      // });
+
+      // return willReturn;
+      return false;
     },
     clickItemHandeler(index) {
       if (this.turn === "me" && !this.items[index]) {
@@ -235,18 +196,13 @@ const checkEndGame = (chooses) => {
     enemyChoose() {
       setTimeout(() => {
         const newItems = [...this.items];
-        let index = Math.floor(Math.random() * 7);
-        while (this.items[index] !== null) {
-          index = Math.floor(Math.random() * 7);
-        }
-        for (let i = 6 * 7 - (7 - index); i >= 0 + index; i -= 7) {
-          if (this.items[i] === null) {
-            newItems[i] = "enemy";
-            this.items = newItems;
-            this.enemyChooses = [...this.enemyChooses, i];
-            break;
-          }
-        }
+        // choose random item
+        let index = this.chooseEnemyWhenTwo() || this.chooseEnemyRandom();
+
+        // initial
+        newItems[index] = "enemy";
+        this.items = newItems;
+        this.enemyChooses = [...this.enemyChooses, index];
       }, 1000);
     },
   },
