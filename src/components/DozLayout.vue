@@ -11,9 +11,7 @@
         'can-hover': turn == 'me',
         'doz-item-success': itemsMakeGameEnd.indexOf(index) >= 0,
       }"
-    >
-      {{ index }}
-    </div>
+    ></div>
     <div
       class="doz-click"
       v-for="item in 7"
@@ -228,6 +226,7 @@ export default {
       return willReturn;
     },
     chooseEnemyRandom() {
+      console.log("choose random");
       let willReturn = 0;
       let chooseRandomColumn = 0;
       while (true) {
