@@ -54,7 +54,7 @@ const checkOurTargetHasInArrayForEnemy = (
   should,
   howMany,
   items,
-  isTwoWay = true
+  advance = false
 ) => {
   let checker = 0;
   let willReturn = false;
@@ -73,30 +73,21 @@ const checkOurTargetHasInArrayForEnemy = (
     }
 
     if (checker >= howMany) {
-      if (isTwoWay) {
-        const beforeItem =
-          items[should[should.indexOf(itemsMakeGameEnd[0]) - 1]];
-        const nextItem =
-          items[
-            should[
-              should.indexOf(itemsMakeGameEnd[itemsMakeGameEnd.length - 1]) + 1
-            ]
-          ];
-        if (beforeItem === null && nextItem === null) {
-          willReturn = beforeItem;
-        }
-      } else {
-        const beforeItem = should[should.indexOf(itemsMakeGameEnd[0]) - 1];
-        const nextItem =
-          should[
-            should.indexOf(itemsMakeGameEnd[itemsMakeGameEnd.length - 1]) + 1
-          ];
+      const beforeItem = should[should.indexOf(itemsMakeGameEnd[0]) - 1];
+      const nextItem =
+        should[
+          should.indexOf(itemsMakeGameEnd[itemsMakeGameEnd.length - 1]) + 1
+        ];
 
-        if (items[beforeItem] === null || items[nextItem] === null) {
+      if (items[beforeItem] === null || items[nextItem] === null) {
+        if (advance && items[nextItem] === null && items[beforeItem] === null) {
+          const advanceTarfet = should[should.indexOf(nextItem) + 1];
+          willReturn = items[advanceTarfet] === "me" ? nextItem : beforeItem;
+        } else {
           willReturn = items[beforeItem] === null ? beforeItem : nextItem;
-          if (items[willReturn + 7] === null) {
-            willReturn = false;
-          }
+        }
+        if (items[willReturn + 7] === null) {
+          willReturn = false;
         }
       }
     }
@@ -238,10 +229,57 @@ export default {
           willReturn = checkOurTargetHasInArrayForEnemy(
             [...this.myChooses],
             row,
-            3,
+            2,
             [...this.items],
-            false
+            true
           );
+          if (willReturn) {
+            console.log("stop win when two");
+          }
+        }
+      });
+
+      return willReturn;
+    },
+    chooseEnemyWhenFowWin() {
+      let willReturn = false;
+      [
+        ...createItemsWithPatternRow(),
+        ...createItemsWithPatternColumn(),
+        ...createItemsWithPatternMultiple(),
+      ].forEach((row) => {
+        if (!willReturn) {
+          willReturn = checkOurTargetHasInArrayForEnemy(
+            [...this.enemyChooses],
+            row,
+            3,
+            [...this.items]
+          );
+          if (willReturn) {
+            console.log("going to win");
+          }
+        }
+      });
+
+      return willReturn;
+    },
+    chooseEnemyWhenThree() {
+      let willReturn = false;
+      [
+        ...createItemsWithPatternRow(),
+        ...createItemsWithPatternColumn(),
+        ...createItemsWithPatternMultiple(),
+      ].forEach((row) => {
+        if (!willReturn) {
+          willReturn = checkOurTargetHasInArrayForEnemy(
+            [...this.myChooses],
+            row,
+            3,
+            [...this.items]
+          );
+          if (willReturn) {
+            console.log("stop win three");
+          }
         }
       });
 
@@ -264,7 +302,11 @@ export default {
       setTimeout(() => {
         const newItems = [...this.items];
         // choose random item
-        let index = this.chooseEnemyWhenTwo() || this.chooseEnemyRandom();
+        let index =
+          this.chooseEnemyWhenFowWin() ||
+          this.chooseEnemyWhenThree() ||
+          this.chooseEnemyWhenTwo() ||
+          this.chooseEnemyRandom();
 
         // initial
         newItems[index] = "enemy";
