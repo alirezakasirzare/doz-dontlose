@@ -11,9 +11,7 @@
         'can-hover': turn == 'me',
         'doz-item-success': itemsMakeGameEnd.indexOf(index) >= 0,
       }"
-    >
-      {{ index }}
-    </div>
+    ></div>
     <div
       class="doz-click"
       v-for="item in 7"
@@ -225,12 +223,22 @@ export default {
       return willReturn;
     },
     chooseEnemyRandom() {
-      let index = Math.floor(Math.random() * 7);
       let willReturn = 0;
-      while (this.items[index] !== null) {
-        index = Math.floor(Math.random() * 7);
+      let chooseRandomColumn = 0;
+      while (true) {
+        chooseRandomColumn = Math.floor(Math.random() * 7);
+        if (
+          this.items[chooseRandomColumn] === null &&
+          !this.ignoreForChooseEnemy.indexOf(chooseRandomColumn) >= 0
+        ) {
+          break;
+        }
       }
-      for (let i = 6 * 7 - (7 - index); i >= 0 + index; i -= 7) {
+      for (
+        let i = 6 * 7 - (7 - chooseRandomColumn);
+        i >= 0 + chooseRandomColumn;
+        i -= 7
+      ) {
         if (this.items[i] === null) {
           willReturn = i;
           break;
@@ -345,7 +353,7 @@ export default {
         this.$store.commit("addMyScore");
         this.$store.commit("chnageStatus", "win");
         this.$store.commit("chnageTurn", "end");
-      } else if (!this.items.filter((item) => item === null).length) {
+      } else if (![...this.items].filter((item) => item === null).length) {
         // Equal
         this.$store.commit("chnageStatus", "equal");
         this.$store.commit("chnageTurn", "end");
@@ -363,7 +371,7 @@ export default {
         this.$store.commit("addEnemyScore");
         this.$store.commit("chnageTurn", "end");
         this.$store.commit("chnageStatus", "lose");
-      } else if (!this.items.filter((item) => item === null).length) {
+      } else if (![...this.items].filter((item) => item === null).length) {
         // Equal
         this.$store.commit("chnageStatus", "equal");
         this.$store.commit("chnageTurn", "end");
