@@ -11,7 +11,9 @@
         'can-hover': turn == 'me',
         'doz-item-success': itemsMakeGameEnd.indexOf(index) >= 0,
       }"
-    ></div>
+    >
+      {{ index }}
+    </div>
     <div
       class="doz-click"
       v-for="item in 7"
@@ -176,6 +178,7 @@ export default {
               willReturn =
                 items[advanceTarget] === "me" ? nextItem : beforeItem;
               if ([...this.ignoreForChooseEnemy].indexOf(willReturn) >= 0) {
+                console.info(`dont choose ${willReturn} for ignore`);
                 willReturn = false;
               }
             } else {
@@ -184,15 +187,17 @@ export default {
                 [...this.ignoreForChooseEnemy].indexOf(willReturn) >= 0 &&
                 advance
               ) {
+                console.info(`dont choose ${willReturn} for ignore`);
                 willReturn = false;
               }
             }
             if (items[willReturn + 7] === null) {
-              if (
-                three &&
-                [...this.ignoreForChooseEnemy].indexOf(willReturn + 7) < 0
-              ) {
-                this.ignoreForChooseEnemy.push(willReturn + 7);
+              if (three && items[nextItem + 7] === null) {
+                if ([...this.ignoreForChooseEnemy].indexOf(nextItem + 7) < 0) {
+                  this.ignoreForChooseEnemy.push(nextItem + 7);
+                }
+              } else if (three && items[beforeItem + 7] === null) {
+                this.ignoreForChooseEnemy.push(beforeItem + 7);
               }
               willReturn = false;
             }
